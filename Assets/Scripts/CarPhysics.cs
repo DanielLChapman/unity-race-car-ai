@@ -9,16 +9,16 @@ public class CarPhysics : MonoBehaviour
     public Transform wheelFrontRight;
     public Transform wheelRearLeft;
     public Transform wheelRearRight;
-    public float springStrength = 10f;
-    public float dampingStrength = 10f;
+    public float springStrength = 100f;
+    public float dampingStrength = 100f;
     [SerializeField]
     Rigidbody carRigidBody;
 
     public float suspensionRestDist = 0.83f;
 
     //direction
-    public float frontTireGrip = 1f;
-    public float rearTireGrip = 1f;
+    public float frontTireGrip = 10f;
+    public float rearTireGrip = 10f;
     public bool frontWheelDrive = true;
 
     public float currentSteering = 0f; // Current steering input
@@ -193,8 +193,9 @@ public class CarPhysics : MonoBehaviour
             float vel = Vector3.Dot(springDir, tireWorldVel);
             float force = (offset * springStrength) - (vel * dampingStrength);
 
-            carRigidBody.AddForceAtPosition(springDir * force, wheel.position);
+            carRigidBody.AddForceAtPosition(springDir * force * 50, wheel.position);
         }
     }
+
 
 }

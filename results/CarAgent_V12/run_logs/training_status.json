@@ -1,0 +1,38 @@
+{
+    "CarAgent": {
+        "checkpoints": [
+            {
+                "steps": 26281,
+                "file_path": "results\\CarAgent_V12\\CarAgent\\CarAgent-26281.onnx",
+                "reward": 9614.470588235294,
+                "creation_time": 1712771927.1766267,
+                "auxillary_file_paths": [
+                    "results\\CarAgent_V12\\CarAgent\\CarAgent-26281.pt"
+                ]
+            },
+            {
+                "steps": 87470,
+                "file_path": "results\\CarAgent_V12\\CarAgent\\CarAgent-87470.onnx",
+                "reward": -4408.421052631579,
+                "creation_time": 1712772424.7801049,
+                "auxillary_file_paths": [
+                    "results\\CarAgent_V12\\CarAgent\\CarAgent-87470.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 87470,
+            "file_path": "results\\CarAgent_V12\\CarAgent.onnx",
+            "reward": -4408.421052631579,
+            "creation_time": 1712772424.7801049,
+            "auxillary_file_paths": [
+                "results\\CarAgent_V12\\CarAgent\\CarAgent-87470.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.26.0",
+        "torch_version": "1.7.1+cu110"
+    }
+}

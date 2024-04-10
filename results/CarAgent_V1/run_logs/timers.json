@@ -1,0 +1,49 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1712689636",
+        "python_version": "3.7.16 (default, Jan 17 2023, 16:06:28) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\dan\\anaconda3\\envs\\ml-racecar\\Scripts\\mlagents-learn config/carAgent.yaml --run-id=CarAgent_V1 --resume",
+        "mlagents_version": "0.26.0",
+        "mlagents_envs_version": "0.26.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "1.7.1+cu110",
+        "numpy_version": "1.21.6",
+        "end_time_seconds": "1712689648"
+    },
+    "total": 12.5858568,
+    "count": 1,
+    "self": 0.00396280000000182,
+    "children": {
+        "run_training.setup": {
+            "total": 0.05056549999999993,
+            "count": 1,
+            "self": 0.05056549999999993
+        },
+        "TrainerController.start_learning": {
+            "total": 12.531328499999999,
+            "count": 1,
+            "self": 7.119999999893878e-05,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 12.0577144,
+                    "count": 1,
+                    "self": 12.0577144
+                },
+                "TrainerController._save_models": {
+                    "total": 0.4735429,
+                    "count": 1,
+                    "self": 0.00635010000000058,
+                    "children": {
+                        "RLTrainer._checkpoint": {
+                            "total": 0.4671927999999994,
+                            "count": 1,
+                            "self": 0.4671927999999994
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
