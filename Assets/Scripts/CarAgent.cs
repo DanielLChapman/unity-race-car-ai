@@ -56,17 +56,22 @@ public class CarAgent : Agent
 
 
 
-    private bool IsTireOnTrack(Transform tire)
+    bool IsTireOnTrack(Transform tire)
     {
         RaycastHit hit;
-        if (Physics.Raycast(tire.position, -Vector3.up, out hit, 1f)) // Adjust the ray length as needed
-        {
-            // Return true if the ray hits the track layer
-           return trackLayer == (trackLayer | (1 << hit.collider.gameObject.layer));
+        float checkDistance = 100.0f; // How far below the tire we check for the track
+        Vector3 startOffset = Vector3.up * 40f; // Small offset to start the ray above the collider
 
+        if (Physics.Raycast(tire.position + startOffset, -Vector3.up, out hit, checkDistance))
+        {
+            if (hit.collider.CompareTag("TrackPiece"))
+            {
+                return true;
+            }
         }
         return false;
     }
+
 
     private void Start()
     {
@@ -131,16 +136,16 @@ public class CarAgent : Agent
 
 
         float totalReward = 0f;
-        Debug.Log(totalReward);
-        totalReward += IsTireOnTrack(carPhysics.wheelFrontLeft) ? 10f : -20f;
-        Debug.Log(totalReward);
-        totalReward += IsTireOnTrack(carPhysics.wheelFrontRight) ? 10f : -20f;
-        Debug.Log(totalReward);
-        totalReward += IsTireOnTrack(carPhysics.wheelRearLeft) ? 10f : -20f;
-        Debug.Log(totalReward);
-        totalReward += IsTireOnTrack(carPhysics.wheelRearRight) ? 10f : -20f;
-        Debug.Log(totalReward);
-
+        bool bool1 = IsTireOnTrack(carPhysics.wheelFrontLeft);
+        bool bool2 = IsTireOnTrack(carPhysics.wheelFrontRight);
+        bool bool3 = IsTireOnTrack(carPhysics.wheelRearLeft);
+        bool bool4 = IsTireOnTrack(carPhysics.wheelRearRight);
+        totalReward += bool1 ? 0.1f : -20f;
+        totalReward += bool2 ? 0.1f : -20f;
+        totalReward += bool3 ? 0.1f : -20f;
+        totalReward += bool4 ? 0.1f : -20f;
+        //Debug.Log($"{bool1}-{bool2}-{bool3}-{bool4}");
+        
         AddReward(totalReward);
     
     }
@@ -186,7 +191,7 @@ public class CarAgent : Agent
 
         if (Mathf.Abs(eulerRotation.x) > maxRotationAngle || Mathf.Abs(eulerRotation.z) > maxRotationAngle)
         {
-            AddReward(-10f); // Punish for flipping
+            AddReward(-1f); // Punish for flipping
             EndEpisode();
         }
 
@@ -200,7 +205,7 @@ public class CarAgent : Agent
         {
             elapsedTime = Time.time - startTime;
         }
-        if (transform.position.y < -1f)
+        if (transform.position.y < -10f)
         {
             AddReward(-100f); // Punish for falling off the map
             EndEpisode();
@@ -245,6 +250,7 @@ public class CarAgent : Agent
         if (other.CompareTag("Checkpoint")) 
         {
            CheckPointTrigger checkpointScript = other.gameObject.GetComponent<CheckPointTrigger>();
+           AddReward(20);
            if (checkpointScript != null)
             {
                 int checkpointID = checkpointScript.checkpointID;

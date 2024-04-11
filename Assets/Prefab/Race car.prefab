@@ -167,8 +167,8 @@ MonoBehaviour:
   rearTireGrip: 100
   frontWheelDrive: 1
   currentSteering: 0
-  timeToFullSteer: 10
-  topSpeed: 10
+  timeToFullSteer: 11
+  topSpeed: 55
   currentSpeed: 0
   maxAcceleration: 3
   accelerationIncrement: 0.1
@@ -246,9 +246,9 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 750
+  MaxStep: 350
   rb: {fileID: 3802251056117150162}
-  id: 0
+  id: 1
   rewardOnTrack: 10
   penaltyOffTrack: -40
   triggerPoints: {fileID: 0}
