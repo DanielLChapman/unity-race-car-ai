@@ -7,6 +7,7 @@ TagManager:
   - Car
   - Checkpoint
   - TrackPiece
+  - Wall
   layers:
   - Default
   - TransparentFX

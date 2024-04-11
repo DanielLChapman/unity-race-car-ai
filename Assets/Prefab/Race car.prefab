@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 8128636769879172736}
   - component: {fileID: 3802251056117150162}
   - component: {fileID: 4592625671010655846}
-  - component: {fileID: 2073183894705645167}
   - component: {fileID: 4636944651205384148}
   - component: {fileID: 946431135663814415}
   - component: {fileID: 8083047839885850825}
@@ -170,37 +169,11 @@ MonoBehaviour:
   timeToFullSteer: 11
   topSpeed: 55
   currentSpeed: 0
-  maxAcceleration: 3
+  maxAcceleration: 6
   accelerationIncrement: 0.1
-  minAcceleration: -3
+  minAcceleration: -6
   currentAcceleration: 0
   brakeStrength: 2
---- !u!114 &2073183894705645167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449617929873213625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SensorName: GroundIdentifier
-  m_DetectableTags: []
-  m_RaysPerDirection: 5
-  m_MaxRayDegrees: 128.7
-  m_SphereCastRadius: 0
-  m_RayLength: 20
-  m_RayLayerMask:
-    serializedVersion: 2
-    m_Bits: 72
-  m_ObservationStacks: 1
-  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: -0.1
-  m_EndVerticalOffset: -5.52
 --- !u!114 &4636944651205384148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 16
+    VectorObservationSize: 17
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -246,9 +219,9 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 350
+  MaxStep: 2000
   rb: {fileID: 3802251056117150162}
-  id: 1
+  id: 2
   rewardOnTrack: 10
   penaltyOffTrack: -40
   triggerPoints: {fileID: 0}
@@ -265,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 5
+  DecisionPeriod: 1
   TakeActionsBetweenDecisions: 1
 --- !u!114 &-5424834843163616340
 MonoBehaviour:
@@ -283,18 +256,20 @@ MonoBehaviour:
   m_DetectableTags:
   - Checkpoint
   - Finish
+  - TrackPiece
+  - Wall
   m_RaysPerDirection: 4
   m_MaxRayDegrees: 133.4
   m_SphereCastRadius: 1.46
-  m_RayLength: 191
+  m_RayLength: 61
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ObservationStacks: 1
   rayHitColor: {r: 0, g: 0.031424284, b: 1, a: 1}
   rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: 0
-  m_EndVerticalOffset: 0.52
+  m_StartVerticalOffset: -1.2
+  m_EndVerticalOffset: -2.4
 --- !u!1 &2373075644479501476
 GameObject:
   m_ObjectHideFlags: 0

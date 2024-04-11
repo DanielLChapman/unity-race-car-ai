@@ -25,10 +25,17 @@ public class CarAgent : Agent
     public float rewardOnTrack = 0.5f; // Reward for each tire on the track
     public float penaltyOffTrack = -20f; // Penalty for each tire off the track
 
+    private float lastX;
+    private float lastZ;
+
+    private float currentTrackID = -1;
+
     [SerializeField]
     public GameObject triggerPoints;
 
     Dictionary<int, HashSet<int>> agentCheckpointsReached = new Dictionary<int, HashSet<int>>();
+
+    Vector3 trackForward = Vector3.forward;
 
     void RegisterCheckpoint(int agentId, int checkpointId)
     {
@@ -41,7 +48,14 @@ public class CarAgent : Agent
         if (!agentCheckpointsReached[agentId].Contains(checkpointId))
         {
             agentCheckpointsReached[agentId].Add(checkpointId);
-            AddReward(100f);
+            AddReward(100f * checkpointId);
+            if (checkpointId == 0) {
+                AddReward(100f);
+            }
+        } 
+        else 
+        {
+            AddReward(-50f);
         }
     }
 
@@ -97,10 +111,13 @@ public class CarAgent : Agent
         sensor.AddObservation(rb.angularVelocity);
         sensor.AddObservation(rb.angularVelocity.magnitude);
         sensor.AddObservation(elapsedTime);
+        sensor.AddObservation(currentTrackID);
     }
     
     public override void OnActionReceived(ActionBuffers actions)
     {
+        lastX = transform.localPosition.x;
+        lastZ = transform.localPosition.z;
         var action = actions.ContinuousActions;
         float steeringAction = action[0]; // Continuous action for steering
         float accelerationAction = action[1]; // Continuous action for acceleration
@@ -116,6 +133,7 @@ public class CarAgent : Agent
         }
         // Clamp currentSteering to be within -1 and 1
          carPhysics.currentSteering = Mathf.Clamp( carPhysics.currentSteering, -1f, 1f);
+
 
         if (accelerationAction > 0) {
             carPhysics.currentAcceleration += accelerationIncrement;
@@ -134,17 +152,20 @@ public class CarAgent : Agent
 
         carPhysics.currentAcceleration = Mathf.Clamp(carPhysics.currentAcceleration, carPhysics.minAcceleration, carPhysics.maxAcceleration);
 
+        
+        
+        
 
         float totalReward = 0f;
         bool bool1 = IsTireOnTrack(carPhysics.wheelFrontLeft);
         bool bool2 = IsTireOnTrack(carPhysics.wheelFrontRight);
         bool bool3 = IsTireOnTrack(carPhysics.wheelRearLeft);
         bool bool4 = IsTireOnTrack(carPhysics.wheelRearRight);
-        totalReward += bool1 ? 0.1f : -20f;
-        totalReward += bool2 ? 0.1f : -20f;
-        totalReward += bool3 ? 0.1f : -20f;
-        totalReward += bool4 ? 0.1f : -20f;
-        //Debug.Log($"{bool1}-{bool2}-{bool3}-{bool4}");
+        totalReward += bool1 ? 0.1f : -1f;
+        totalReward += bool2 ? 0.1f : -1f;
+        totalReward += bool3 ? 0.1f : -1f;
+        totalReward += bool4 ? 0.1f : -1f;
+        
         
         AddReward(totalReward);
     
@@ -211,6 +232,28 @@ public class CarAgent : Agent
             EndEpisode();
         }
 
+        Vector3 currentForwardDirection = trackForward; // Implement this based on your track
+        float forwardVelocity = Vector3.Dot(rb.velocity, currentForwardDirection.normalized);
+
+        Debug.Log(forwardVelocity);
+
+        // Ensure that the reward is only given for forward movement
+        if (forwardVelocity > 0) {
+            AddReward(forwardVelocity * 1f); // Adjust 'forwardVelocityRewardFactor' as needed
+        } else if (forwardVelocity < -5f) {
+            AddReward(-5f);
+        }
+        
+        RaycastHit hit;
+        if (Physics.Raycast(rb.position + Vector3.up * 50f, -Vector3.up, out hit, 100f))
+        {
+            TrackPiece hitTrackPiece = hit.collider.GetComponent<TrackPiece>();
+            if (hitTrackPiece != null)
+            {
+               currentTrackID = hitTrackPiece.id;
+            }
+        }
+        AddReward(currentTrackID / 10f);
         CheckForFlipping();
     }
     public override void OnEpisodeBegin()
@@ -227,8 +270,16 @@ public class CarAgent : Agent
         startTime = Time.time;
         elapsedTime = 0f;
         finishLineCrossed = false;
+        trackForward = Vector3.forward;
 
-        ResetAgentCheckpoints(id);
+        //ResetAgentCheckpoints(id);
+        foreach (Transform checkpoint in triggerPoints.transform)
+        {
+            checkpoint.gameObject.SetActive(true); // Reactivates the checkpoint
+            // If there are any additional components or settings you need to reset,
+            // you can do that here. For example:
+            // checkpoint.GetComponent<Checkpoint>().ResetCheckpoint();
+        }
     }
 
 
@@ -249,16 +300,41 @@ public class CarAgent : Agent
         }
         if (other.CompareTag("Checkpoint")) 
         {
-           CheckPointTrigger checkpointScript = other.gameObject.GetComponent<CheckPointTrigger>();
-           AddReward(20);
+           /*CheckPointTrigger checkpointScript = other.gameObject.GetComponent<CheckPointTrigger>();
+           
            if (checkpointScript != null)
             {
                 int checkpointID = checkpointScript.checkpointID;
-                Debug.Log($"Hit checkpoint ID: {checkpointID}");
+
 
                 // Here you can handle the checkpoint logic, such as checking if it's the next expected checkpoint
                 // And rewarding the agent accordingly
                 RegisterCheckpoint(id, checkpointID);
+            }*/
+            
+            CheckPointTrigger checkpointScript = other.gameObject.GetComponent<CheckPointTrigger>();
+             if (checkpointScript != null)
+            {
+                int checkpointID = checkpointScript.checkpointID;
+
+
+                // Here you can handle the checkpoint logic, such as checking if it's the next expected checkpoint
+                // And rewarding the agent accordingly
+                AddReward(10f * checkpointID + 100f);
+            }
+
+            other.gameObject.SetActive(false); // Disable the checkpoint
+    
+        }
+        if (other.gameObject.CompareTag("TrackPiece")) // Ensure your track pieces have a specific tag
+        {
+            TrackPiece piece = other.GetComponent<TrackPiece>();
+            if (piece != null)
+            {
+                // Now you have access to the piece's forward direction
+                trackForward = piece.forwardDirection;
+
+                // Use trackForward for navigation, AI steering, etc.
             }
         }
     }
